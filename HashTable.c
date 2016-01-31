@@ -51,7 +51,6 @@ static struct node *NewNode(void* data, char* key)
     return newnode;
 }
 
-// IntHash modified from midterm 2
 unsigned char IntHash (int key, unsigned char Size)
 {
     if (Size == 0)
@@ -66,7 +65,6 @@ unsigned char IntHash (int key, unsigned char Size)
     return (unsigned char)result;
 }
 
-// StringHash modified from midterm 2
 unsigned char StringHash (char *key, unsigned char Size)
 {
     int total = 0;
@@ -95,8 +93,8 @@ int CreateHashTable (HashTablePTR *hashTableHandle, unsigned int initialSize)
 
     (*temp).Size = (unsigned char) initialSize;
     
-    if (initialSize == 0)            // since the array has no use as there are no buckets
-    {    temp -> array = NULL;}        // just a way to prevent future memory leaks
+    if (initialSize == 0)            
+    {    temp -> array = NULL;}       
 
     for (int i = 0; i < initialSize; i++)
     {    new_array[i] = NULL;}
@@ -129,7 +127,7 @@ int DestroyHashTable (HashTablePTR *hashTableHandle)
         free(*hashTableHandle);                // free the hashTableobject
         *hashTableHandle = NULL;            // set the handle to point to NULL
         return 0;}
-    // note: size 0 destroy works, but depending on the tester may cause some minor valgrind issues due to the hashTable->array being set to NULL (to prevent memory leaks since there are no buckets and thus it has no use)
+   
 
     struct node **head;
     (*hashTableHandle)->dynamicBehaviour = 0;
@@ -285,8 +283,8 @@ int DeleteEntry (HashTablePTR hashTable, char *key, void **dataHandle)
     if (pHashTableInfo == NULL)
     {    return -1;}
 
-    // If you are deleting the final node in the hashTable, it turn off dynamicBehaviour to prevent an endless loop of trying to get useFactor of 0 to be greater than the contractUseFactor >=0
-    // As stated in the project 3B change email, "the number of buckets in the HashTable cannot be less than 1"
+
+    // The number of buckets in the HashTable cannot be less than 1
     if ((keycount == 1) && (hashTable->dynamicBehaviour != 0))
     {    hashTable->dynamicBehaviour = 0;}
 
@@ -458,7 +456,6 @@ int SetResizeBehaviour (HashTablePTR hashTable, int dynamicBehaviour, float expa
 
     if ((expandUseFactor > 1) || (contractUseFactor < 0))
     {    return 1;}    
-    // avoids having a case where achieving either of the contract or expand use factors is impossible (bad user input)
 
     hashTable -> dynamicBehaviour = dynamicBehaviour;
     hashTable -> expandUseFactor = expandUseFactor;
@@ -488,7 +485,6 @@ int Resize(HashTablePTR hashTable)
     unsigned int keyCount;
     keyCount = (unsigned int)keycount;            // global variable
     
-// NOTE: memory leak from here, must free array & items once it's done being used by other functions
     char **keysArray = calloc(keyCount, sizeof(char*));     
     void **dataArray = calloc(keyCount,sizeof(void*));    // array storing all data
     void *data;                        // temp data storage
@@ -554,10 +550,6 @@ int ResizeHelper(HashTablePTR hashTable, unsigned char size, void **dataArray, c
     hashTable -> dynamicBehaviour = 1;
     keycount = temp_keycount;
 
-//    for (int i = 0; i < keycount; i++)
-//    {    free(keysArray[i]);}
-
-//    free(keysArray);
     free(dataArray);
     free(previousDataHandle);
     free(pHashTableInfo);
